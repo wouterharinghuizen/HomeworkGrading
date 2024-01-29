@@ -1,0 +1,37 @@
+image: python:3.7-stretch
+
+before_script:
+  - pip install pip --upgrade
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+  - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.kpmg.nl/KPMG-NL-AABD/ResearchAndDevelopment/Tools/cicd.git
+  - export PIP_EXTRA_INDEX_URL=https://pypi.python.org/simple/
+
+variables:
+  PACKAGE_NAME: "handwrittenhomeworkgrading"
+  PYPI_REPOSITORY: SECURE
+  PYPI_USERNAME: SECURE
+  PYPI_PASSWORD: SECURE
+  DOCS_SAS: SECURE
+  DOCS_URL: SECURE
+
+stages:
+  - tests
+  # - deploy
+
+# put your tests here
+test_with_coverage:
+  stage: tests
+  script:
+    - ./cicd/scripts/test_with_coverage.sh
+  only:
+  - merge_requests
+  - master
+
+# deploy to devops pypi
+# deploy_pypi:
+#   stage: deploy
+#   script:
+#     - ./cicd/scripts/deploy_devops_pypi.sh
+#   only:
+#     - tags

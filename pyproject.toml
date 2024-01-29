@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 80
+# Exclude everything in the .gitignore, but also:
+extend-exclude = '''
+/(
+    notebooks
+    | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
