@@ -14,7 +14,6 @@
 # ---
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 
 interesting_subdatasets = [
@@ -89,12 +88,11 @@ for filename in all_dataframes:
     display(df.head(1))
 
 
-# In all the MATH subdatasets the solution is in the "comment" column. Except for the 30jan prealgebra and 30jan precalculus dataset. So initially
-# 1) we will create a solution column and then
+# In all the MATH subdatasets the solution is in the "comment" column. Except for the 30jan prealgebra and 30jan precalculus dataset. So initially 
+# 1) we will create a solution column and then 
 # 2) will use the solution column from the 9jan dataset on the 30jan dataset, since the questions are identical, thus the solutions are as well.
 
 # 1)
-
 
 # +
 def split_officialsolution_MATH(string):
@@ -122,7 +120,7 @@ for filename in all_dataframes:
     display(df.head(1))
 # -
 
-# 2)
+# 2) 
 
 # +
 all_dataframes["dataset_30jan\MATH Prealgebra"]
@@ -151,7 +149,6 @@ all_dataframes["dataset_30jan\MATH Precalculus"] = all_dataframes[
 
 display(all_dataframes["dataset_30jan\MATH Precalculus"])
 display(all_dataframes["dataset_30jan\MATH Prealgebra"])
-
 # -
 
 # ## now we will change the list of error codes to error strings.
@@ -240,7 +237,6 @@ for filename in all_dataframes:
     df["errorstring"] = df.errorcodes.apply(error_code_to_str)
     df.drop(
         columns=[
-            "errorcodes",
             "warningcodes",
             "comment",
             "msc",
@@ -252,8 +248,6 @@ for filename in all_dataframes:
     )
     all_dataframes[filename] = df
 
-
-# +
 for filename in all_dataframes:
     folder, file = filename.split("\\")
     folderpath = os.path.join(directory, "preprocessed", folder)
@@ -268,7 +262,6 @@ for filename in all_dataframes:
     display(df.head(10))
     df.to_csv(filepath)
 
-
 # +
 total_df = pd.DataFrame()
 for filename in all_dataframes:
@@ -276,30 +269,3 @@ for filename in all_dataframes:
     total_df = pd.concat([total_df, df])
 
 total_df
-
-
-# -
-
-
-class GHOSTSDataloader:
-    def __init__(self, csv_file: str) -> None:
-        """_summary_
-
-        Args:
-            csv_file (str): path to csv file with preprocessed GHOSTS data
-        """
-        self.df = pd.read_csv(folder_totaldf)
-
-    def __len__(self) -> None:
-        return self.df.shape[0]
-
-    def __getitem__(self, idx) -> dict:
-        row = self.df.iloc[idx]
-
-        return {
-            "prompt": row["prompt"],
-            "output": row["output"],
-            "rating": row["rating"],
-            "solution": row["solution"],
-            "errorstring": row["errorstring"],
-        }
