@@ -279,11 +279,10 @@ class GradingDataProcessor:
             if isinstance(transform_spc, str):
                 # Rename column operation
                 if transform_spc in df.columns:
-                    df.rename(
+                    df = df.rename(
                         columns={
                             transform_spc: self.correct_answer_column_name
                         },
-                        inplace=True,
                     )
                 else:
                     raise KeyError(
@@ -341,7 +340,7 @@ class GradingDataProcessor:
             for column in self.dataframes[df_name].columns:
                 try:
                     unique_values = self.dataframes[df_name][column].unique()
-                    unique_count = len(unique_values)
+                    unique_count = unique_values.nunique()
                     tmp_df_nr_unique_values[column] = unique_count
 
                     # Check if print_single_unique is True and if the column

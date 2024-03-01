@@ -85,6 +85,50 @@ class StudentChatbot:
             )
             self._prompts.append(prompt)
 
+    def add_few_shot_example(
+        self,
+        question: str,
+        student_answer: str,
+        correct_answer: str,
+        preferred_output: str,
+    ) -> None:
+        """
+        Adds a few-shot learning example to the chatbot's context, using the
+        specified prompt format.
+
+        This method allows users to provide a question, student answer, and
+        correct answer to be formatted according to the class's prompt
+        structure, along with the preferred response, to guide the chatbot's
+        future responses.
+
+        Parameters
+        ----------
+        question : str
+            The question part of the prompt.
+        student_answer : str
+            The student answer part of the prompt.
+        correct_answer : str
+            The correct answer part of the prompt.
+        preferred_output : str
+            The desired output or response for the given prompt configuration.
+        """
+        # Format the prompt using the provided information and the stored
+        # prompt format
+        formatted_prompt = self._prompt.format(
+            question=question,
+            student_answer=student_answer,
+            correct_answer=correct_answer,
+        )
+
+        # Add the formatted prompt as a user message
+        self.chatbot.messages.append(
+            {"role": "user", "content": formatted_prompt}
+        )
+        # Add the preferred output as an assistant message
+        self.chatbot.messages.append(
+            {"role": "assistant", "content": preferred_output}
+        )
+
     def get_responses(self) -> List[str]:
         """
         Generates responses from the chatbot for each prompt in the list of
@@ -112,7 +156,7 @@ class StudentChatbot:
 
     def write_responses_to_dataframe(
         self, responses: List[str], output_path: str = None
-    ) -> None:
+    ) -> pd.DataFrame:
         """
         Writes the chatbot responses to the original dataframe, saves it to a
         CSV file in a newly created folder named with the current date and time,
@@ -136,7 +180,7 @@ class StudentChatbot:
 
         self._dataframe["response"] = responses
 
-        if not output_path:
+        if output_path is None:
             return self._dataframe
 
         # Create a folder named with the current date and time
@@ -156,3 +200,5 @@ class StudentChatbot:
         json_file_path = folder_path / "chat_info.json"
         with open(json_file_path, "w") as json_file:
             json.dump(info, json_file, indent=4)
+
+        return self._dataframe
